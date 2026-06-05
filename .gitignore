@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite
+*.db
+build/
+dist/
+*.spec
+.DS_Store
+documentos_presencas/

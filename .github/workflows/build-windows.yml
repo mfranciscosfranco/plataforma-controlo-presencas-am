@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Obter código
-        uses: actions/checkout@v6
+        uses: actions/checkout@v5
 
       - name: Instalar Python
         uses: actions/setup-python@v6
@@ -48,17 +48,23 @@ jobs:
           dir dist
 
       - name: Criar pacote de distribuição
+        shell: pwsh
         run: |
-          mkdir pacote_windows
-          copy dist\ControloPresencasAM.exe pacote_windows\
-          echo Plataforma de Controlo de Presencas da Assembleia Municipal > pacote_windows\LEIA-ME.txt
-          echo. >> pacote_windows\LEIA-ME.txt
-          echo Execute o ficheiro ControloPresencasAM.exe. >> pacote_windows\LEIA-ME.txt
-          echo A base de dados SQLite sera criada automaticamente na mesma pasta do executavel. >> pacote_windows\LEIA-ME.txt
-          echo A pasta documentos_presencas sera criada automaticamente quando forem anexados documentos. >> pacote_windows\LEIA-ME.txt
+          New-Item -ItemType Directory -Force -Path pacote_windows
+          Copy-Item -Path "dist\ControloPresencasAM.exe" -Destination "pacote_windows\ControloPresencasAM.exe"
+
+          @"
+Plataforma de Controlo de Presenças da Assembleia Municipal
+
+Execute o ficheiro ControloPresencasAM.exe.
+
+A base de dados SQLite será criada automaticamente na mesma pasta do executável.
+
+A pasta documentos_presencas será criada automaticamente quando forem anexados documentos.
+"@ | Out-File -FilePath "pacote_windows\LEIA-ME.txt" -Encoding utf8
 
       - name: Publicar executável como artefacto
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ControloPresencasAM-Windows
           path: pacote_windows/
