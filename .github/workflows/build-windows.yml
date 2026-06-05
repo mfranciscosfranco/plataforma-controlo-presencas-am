@@ -28,21 +28,22 @@ jobs:
           pip install PySide6
           pip install pyinstaller
 
-      - name: Validar sintaxe
+      - name: Validar sintaxe do main
         run: python -m py_compile main_controlo_presencas_am.py
 
       - name: Criar executável Windows
         run: |
           pyinstaller --noconfirm --clean --windowed --onefile --name "ControloPresencasAM" main_controlo_presencas_am.py
 
-      - name: Criar pasta de distribuição
+      - name: Criar pacote de distribuição
         run: |
           mkdir pacote_windows
           copy dist\ControloPresencasAM.exe pacote_windows\
-          echo Plataforma de Controlo de Presencas AM > pacote_windows\LEIA-ME.txt
+          echo Plataforma de Controlo de Presencas da Assembleia Municipal > pacote_windows\LEIA-ME.txt
           echo. >> pacote_windows\LEIA-ME.txt
           echo Execute o ficheiro ControloPresencasAM.exe. >> pacote_windows\LEIA-ME.txt
           echo A base de dados SQLite sera criada automaticamente na mesma pasta do executavel. >> pacote_windows\LEIA-ME.txt
+          echo A pasta documentos_presencas sera criada automaticamente quando forem anexados documentos. >> pacote_windows\LEIA-ME.txt
 
       - name: Publicar executável como artefacto
         uses: actions/upload-artifact@v4
