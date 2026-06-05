@@ -1,6 +1,6 @@
-name: Build Windows Executable
+name: Compilar EXE Windows
 
-on:
+"on":
   workflow_dispatch:
   push:
     branches:
@@ -14,11 +14,11 @@ jobs:
     runs-on: windows-2022
 
     steps:
-      - name: Obter código
-        uses: actions/checkout@v5
+      - name: Obter codigo
+        uses: actions/checkout@v4
 
       - name: Instalar Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           architecture: "x64"
@@ -26,24 +26,24 @@ jobs:
       - name: Atualizar pip
         run: python -m pip install --upgrade pip
 
-      - name: Instalar dependências
+      - name: Instalar dependencias
         run: |
           python -m pip install PySide6 pyinstaller
 
-      - name: Listar ficheiros do repositório
+      - name: Listar ficheiros
         run: dir
 
-      - name: Validar sintaxe do main
+      - name: Validar sintaxe
         run: python -m py_compile main_controlo_presencas_am.py
 
-      - name: Criar executável Windows
+      - name: Criar executavel
         run: |
           pyinstaller --noconfirm --clean --windowed --onefile --name "ControloPresencasAM" --collect-all PySide6 main_controlo_presencas_am.py
 
-      - name: Verificar executável criado
+      - name: Verificar executavel
         run: dir dist
 
-      - name: Criar pacote de distribuição
+      - name: Criar pacote Windows
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path pacote_windows
@@ -59,7 +59,7 @@ A base de dados SQLite será criada automaticamente na mesma pasta do executáve
 A pasta documentos_presencas será criada automaticamente quando forem anexados documentos.
 "@ | Out-File -FilePath "pacote_windows\LEIA-ME.txt" -Encoding utf8
 
-      - name: Publicar executável como artefacto
+      - name: Publicar artefacto
         uses: actions/upload-artifact@v4
         with:
           name: ControloPresencasAM-Windows
