@@ -1,0 +1,51 @@
+name: Build Windows Executable
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Obter código
+        uses: actions/checkout@v4
+
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Atualizar pip
+        run: python -m pip install --upgrade pip
+
+      - name: Instalar dependências
+        run: |
+          pip install PySide6
+          pip install pyinstaller
+
+      - name: Validar sintaxe
+        run: python -m py_compile main_controlo_presencas_am.py
+
+      - name: Criar executável Windows
+        run: |
+          pyinstaller --noconfirm --clean --windowed --onefile --name "ControloPresencasAM" main_controlo_presencas_am.py
+
+      - name: Criar pasta de distribuição
+        run: |
+          mkdir pacote_windows
+          copy dist\ControloPresencasAM.exe pacote_windows\
+          echo Plataforma de Controlo de Presencas AM > pacote_windows\LEIA-ME.txt
+          echo. >> pacote_windows\LEIA-ME.txt
+          echo Execute o ficheiro ControloPresencasAM.exe. >> pacote_windows\LEIA-ME.txt
+          echo A base de dados SQLite sera criada automaticamente na mesma pasta do executavel. >> pacote_windows\LEIA-ME.txt
+
+      - name: Publicar executável como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: ControloPresencasAM-Windows
+          path: pacote_windows/
