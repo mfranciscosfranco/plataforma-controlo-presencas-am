@@ -7,33 +7,45 @@ on:
       - main
       - master
 
+permissions:
+  contents: read
+
 jobs:
   build-windows:
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
       - name: Obter código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Instalar Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
+          architecture: 'x64'
+          cache: 'pip'
 
       - name: Atualizar pip
         run: python -m pip install --upgrade pip
 
       - name: Instalar dependências
         run: |
-          pip install PySide6
-          pip install pyinstaller
+          python -m pip install PySide6 pyinstaller
+
+      - name: Listar ficheiros do repositório
+        run: |
+          dir
 
       - name: Validar sintaxe do main
         run: python -m py_compile main_controlo_presencas_am.py
 
       - name: Criar executável Windows
         run: |
-          pyinstaller --noconfirm --clean --windowed --onefile --name "ControloPresencasAM" main_controlo_presencas_am.py
+          pyinstaller --noconfirm --clean --windowed --onefile --name "ControloPresencasAM" --collect-all PySide6 main_controlo_presencas_am.py
+
+      - name: Verificar executável criado
+        run: |
+          dir dist
 
       - name: Criar pacote de distribuição
         run: |
